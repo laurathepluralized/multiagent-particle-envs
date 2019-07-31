@@ -17,22 +17,32 @@ from gym import error
 try:
     import pyglet
 except ImportError as e:
-    #reraise(suffix="HINT: you can install pyglet directly via 'pip install pyglet'. But if you really just want to install all Gym dependencies and not have to think about it, 'pip install -e .[all]' or 'pip install gym[all]' will do it.")
+    #reraise(suffix="HINT: you can install pyglet directly via 'pip install 
+    #pyglet'. But if you really just want to install all Gym dependencies and 
+    #not have to think about it, 'pip install -e .[all]' or 'pip install 
+    #gym[all]' will do it.")
     raise ImportError('''
     Cannot import pyglet.
     HINT: you can install pyglet directly via 'pip install pyglet'.
-    But if you really just want to install all Gym dependencies and not have to think about it,
+    But if you really just want to install all Gym dependencies and not have to 
+    think about it,
     'pip install -e .[all]' or 'pip install gym[all]' will do it.
     ''')
 
 try:
     from pyglet.gl import *
 except ImportError as e:
-    #reraise(prefix="Error occured while running `from pyglet.gl import *`",suffix="HINT: make sure you have OpenGL install. On Ubuntu, you can run 'apt-get install python-opengl'. If you're running on a server, you may need a virtual frame buffer; something like this should work: 'xvfb-run -s \"-screen 0 1400x900x24\" python <your_script.py>'")
+    #reraise(prefix="Error occured while running `from pyglet.gl import 
+    #*`",suffix="HINT: make sure you have OpenGL install. On Ubuntu, you can 
+    #run 'apt-get install python-opengl'. If you're running on a server, you 
+    #may need a virtual frame buffer; something like this should work: 
+    #'xvfb-run -s \"-screen 0 1400x900x24\" python <your_script.py>'")
     raise ImportError('''
     Error occured while running `from pyglet.gl import *`
-    HINT: make sure you have OpenGL install. On Ubuntu, you can run 'apt-get install python-opengl'.
-    If you're running on a server, you may need a virtual frame buffer; something like this should work:
+    HINT: make sure you have OpenGL install. On Ubuntu, you can run
+    'apt-get install python-opengl'.
+    If you're running on a server, you may need a virtual frame buffer; 
+    something like this should work:
     'xvfb-run -s \"-screen 0 1400x900x24\" python <your_script.py>'
     ''')
 import math
@@ -51,7 +61,8 @@ def get_display(spec):
     elif isinstance(spec, six.string_types):
         return pyglet.canvas.Display(spec)
     else:
-        raise error.Error('Invalid display specification: {}. (Must be a string like :0 or None.)'.format(spec))
+        raise error.Error(
+            'Invalid display specification: {}. (Must be a string like :0 or None.)'.format(spec))
 
 class Viewer(object):
     def __init__(self, width, height, display=None):
@@ -60,7 +71,8 @@ class Viewer(object):
         self.width = width
         self.height = height
 
-        self.window = pyglet.window.Window(width=width, height=height, display=display)
+        self.window = pyglet.window.Window(width=width, height=height,
+                                           display=display)
         self.window.on_close = self.window_closed_by_user
         self.geoms = []
         self.onetime_geoms = []
@@ -149,7 +161,8 @@ class Viewer(object):
 
     def get_array(self):
         self.window.flip()
-        image_data = pyglet.image.get_buffer_manager().get_color_buffer().get_image_data()
+        image_data = \
+            pyglet.image.get_buffer_manager().get_color_buffer().get_image_data()
         self.window.flip()
         arr = np.fromstring(image_data.data, dtype=np.uint8, sep='')
         arr = arr.reshape(self.height, self.width, 4)
@@ -191,7 +204,8 @@ class Transform(Attr):
         self.set_scale(*scale)
     def enable(self):
         glPushMatrix()
-        glTranslatef(self.translation[0], self.translation[1], 0) # translate to GL loc ppint
+        # translate to GL loc ppint
+        glTranslatef(self.translation[0], self.translation[1], 0)
         glRotatef(RAD2DEG * self.rotation, 0, 0, 1.0)
         glScalef(self.scale[0], self.scale[1], 1)
     def disable(self):
@@ -244,7 +258,8 @@ class FilledPolygon(Geom):
             glVertex3f(p[0], p[1],0)  # draw each vertex
         glEnd()
 
-        color = (self._color.vec4[0] * 0.5, self._color.vec4[1] * 0.5, self._color.vec4[2] * 0.5, self._color.vec4[3] * 0.5)
+        color = (self._color.vec4[0] * 0.5, self._color.vec4[1] * 0.5,
+                 self._color.vec4[2] * 0.5, self._color.vec4[3] * 0.5)
         glColor4f(*color)
         glBegin(GL_LINE_LOOP)
         for p in self.v:
@@ -325,7 +340,8 @@ class Image(Geom):
         self.img = img
         self.flip = False
     def render1(self):
-        self.img.blit(-self.width/2, -self.height/2, width=self.width, height=self.height)
+        self.img.blit(-self.width/2, -self.height/2,
+                      width=self.width, height=self.height)
 
 # ================================================================
 
@@ -337,12 +353,14 @@ class SimpleImageViewer(object):
     def imshow(self, arr):
         if self.window is None:
             height, width, channels = arr.shape
-            self.window = pyglet.window.Window(width=width, height=height, display=self.display)
+            self.window = pyglet.window.Window(width=width, height=height, 
+                                               display=self.display)
             self.width = width
             self.height = height
             self.isopen = True
         assert arr.shape == (self.height, self.width, 3), "You passed in an image with the wrong number shape"
-        image = pyglet.image.ImageData(self.width, self.height, 'RGB', arr.tobytes(), pitch=self.width * -3)
+        image = pyglet.image.ImageData(self.width, self.height, 'RGB',
+                                       arr.tobytes(), pitch=self.width * -3)
         self.window.clear()
         self.window.switch_to()
         self.window.dispatch_events()
