@@ -77,7 +77,8 @@ class Scenario(BaseScenario):
     def good_agents(self, world):
         return [agent for agent in world.agents if not agent.adversary]
 
-    # return all adversarial agents def adversaries(self, world):
+    # return all adversarial agents
+    def adversaries(self, world):
         return [agent for agent in world.agents if agent.adversary]
 
 
