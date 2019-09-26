@@ -80,7 +80,9 @@ class Agent(Entity):
 
 # multi-agent world
 class World(object):
-    def __init__(self):
+    def __init__(self, rngseed):
+        self.rngseed = rngseed
+        np.random.seed(rngseed)
         # list of agents and entities (can change at execution-time!)
         self.agents = []
         self.landmarks = []
@@ -133,7 +135,7 @@ class World(object):
     # gather agent action forces
     def _apply_action_force(self, p_force):
         # set applied forces
-        for i,agent in enumerate(self.agents):
+        for i, agent in enumerate(self.agents):
             if agent.movable:
                 noise = np.random.randn(*agent.action.u.shape) * agent.u_noise if agent.u_noise else 0.0
                 p_force[i] = agent.action.u + noise

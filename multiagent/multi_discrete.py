@@ -23,12 +23,12 @@ class MultiDiscrete(gym.Space):
     - Can be initialized as
         MultiDiscrete([ [0,4], [0,1], [0,1] ])
     """
-    def __init__(self, array_of_param_array):
+    def __init__(self, array_of_param_array, rngseed=None):
         self.low = np.array([x[0] for x in array_of_param_array])
         self.high = np.array([x[1] for x in array_of_param_array])
         self.num_discrete_space = self.low.shape[0]
 
-        self.random = seeding.np_random()
+        self.random = seeding.np_random(rngseed)
 
     def sample(self):
         """ Returns a array with one sample from each discrete action space """

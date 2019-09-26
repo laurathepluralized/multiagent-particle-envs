@@ -3,8 +3,9 @@ from multiagent.core import World, Agent, Landmark
 from multiagent.scenario import BaseScenario
 
 class Scenario(BaseScenario):
-    def make_world(self):
-        world = World()
+    def make_world(self, rngseed):
+        world = World(rngseed)
+        np.random.seed(rngseed)
         # add agents
         world.agents = [Agent() for i in range(1)]
         for i, agent in enumerate(world.agents):

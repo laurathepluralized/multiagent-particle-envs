@@ -4,8 +4,9 @@ from multiagent.scenario import BaseScenario
 
 
 class Scenario(BaseScenario):
-    def make_world(self):
-        world = World()
+    def make_world(self, rngseed):
+        world = World(rngseed)
+        np.random.seed(rngseed)
         # set any world properties first
         world.dim_c = 4
         #world.damping = 1

@@ -18,8 +18,9 @@ class CryptoAgent(Agent):
 
 class Scenario(BaseScenario):
 
-    def make_world(self):
-        world = World()
+    def make_world(self, rngseed):
+        world = World(rngseed)
+        np.random.seed(rngseed)
         # set any world properties first
         num_agents = 3
         num_adversaries = 1
