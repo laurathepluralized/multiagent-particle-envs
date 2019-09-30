@@ -23,7 +23,8 @@ class Scenario(BaseScenario):
             agent.size = 0.075 if agent.adversary else 0.05
             agent.accel = 3.0 if agent.adversary else 4.0
             #agent.accel = 20.0 if agent.adversary else 25.0
-            agent.max_speed = 1.0 if agent.adversary else 1.3
+            # agent.max_speed = 1.0 if agent.adversary else 1.3
+            agent.max_speed = 1.0 if agent.adversary else 0.0
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
         for i, landmark in enumerate(world.landmarks):
@@ -91,7 +92,7 @@ class Scenario(BaseScenario):
 
     def agent_reward(self, agent, world):
         # Agents are negatively rewarded if caught by adversaries
-        rew = 0
+        rew = 0.0
         shape = False
         adversaries = self.adversaries(world)
         # reward can optionally be shaped (increased reward for increased
@@ -103,17 +104,17 @@ class Scenario(BaseScenario):
         if agent.collide:
             for a in adversaries:
                 if self.is_collision(a, agent):
-                    rew -= 10
+                    rew -= 10.0
 
         # agents are penalized for exiting the screen, so that they can be
         # caught by the adversaries
         def bound(x):
             if x < 0.9:
-                return 0
+                return 0.0
             if x < 1.0:
-                return (x - 0.9) * 10
+                return (x - 0.9) * 10.0
             # return min(np.exp(2 * x - 2), 10)
-            return min(np.exp(2 * x), 10)
+            return min(np.exp(2 * x), 10.0)
         for p in range(world.dim_p):
             x = abs(agent.state.p_pos[p])
             rew -= bound(x)
@@ -122,7 +123,7 @@ class Scenario(BaseScenario):
 
     def adversary_reward(self, agent, world):
         # Adversaries are rewarded for collisions with agents
-        rew = 0
+        rew = 0.0
         shape = False
         agents = self.good_agents(world)
         adversaries = self.adversaries(world)
@@ -136,7 +137,7 @@ class Scenario(BaseScenario):
             for ag in agents:
                 for adv in adversaries:
                     if self.is_collision(ag, adv):
-                        rew += 10
+                        rew += 10.0
         return rew
 
     def observation(self, agent, world):
