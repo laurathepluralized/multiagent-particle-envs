@@ -1,8 +1,6 @@
 import numpy as np
 from multiagent.core import World, Agent, Landmark
 from multiagent.scenario import BaseScenario
-import ipdb as pdb
-import pysnooper
 
 
 class Scenario(BaseScenario):
@@ -166,9 +164,5 @@ class Scenario(BaseScenario):
             other_pos.append(other.state.p_pos - agent.state.p_pos)
             # if not other.adversary:
             other_vel.append(other.state.p_vel)
-        # with pysnooper.snoop():
-        #     theobs = np.concatenate([agent.state.p_vel] + [agent.state.p_pos] +
-        #                           entity_pos + other_pos + other_vel)
-        # pdb.set_trace()
         return np.concatenate([agent.state.p_vel] + [agent.state.p_pos] +
                               entity_pos + other_pos + other_vel)
