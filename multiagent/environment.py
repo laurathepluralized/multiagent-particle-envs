@@ -101,13 +101,34 @@ class MultiAgentEnv(gym.Env):
             done_n.append(self._get_done(agent))
 
             info_n['n'].append(self._get_info(agent))
+        global_obs = self.global_observation()
 
         # all agents get total reward in cooperative case
         reward = np.sum(reward_n)
         if self.shared_reward:
             reward_n = [reward] * self.n
 
-        return obs_n, reward_n, done_n, info_n
+        return obs_n, global_obs, reward_n, done_n, info_n
+
+    def global_observation(self):
+        # get positions of all entities in inertial reference frame
+        global_obs = []
+        entity_pos = []
+        for entity in self.world.landmarks:
+            if not entity.boundary:
+                entity_pos.append(entity.state.p_pos)
+        global_obs.append(entity_pos)
+        # communication of all agents
+        comm = []
+        other_pos = []
+        other_vel = []
+        for theagent in self.world.agents:
+            comm.append(theagent.state.c)
+            other_pos.append(theagent.state.p_pos)
+            other_vel.append(theagent.state.p_vel)
+        global_obs.append(other_pos)
+        global_obs.append(other_vel)
+        return global_obs
 
     def reset(self):
         # reset world
@@ -119,7 +140,8 @@ class MultiAgentEnv(gym.Env):
         self.agents = self.world.policy_agents
         for agent in self.agents:
             obs_n.append(self._get_obs(agent))
-        return obs_n
+        global_obs = self.global_observation()
+        return obs_n, global_obs
 
     # get info used for benchmarking
     def _get_info(self, agent):
@@ -333,9 +355,12 @@ class BatchMultiAgentEnv(gym.Env):
 
     def reset(self):
         obs_n = []
+        global_obs = []
         for env in self.env_batch:
-            obs_n += env.reset()
-        return obs_n
+            this_obs_n, this_global_obs = env.reset()
+            obs_n += this_obs_n
+            global_obs += this_global_obs
+        return obs_n, global_obs
 
     # render environment
     def render(self, mode='human', close=True):
